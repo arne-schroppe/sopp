@@ -1,0 +1,14 @@
+
+#define it(desc) void desc (void *_context)
+
+
+typedef void (*spec)(void *);
+typedef struct { const char *name; spec spec; } test_description;
+#define test(name) { #name, name }
+#define start_suite(name) const test_description name[] = {
+#define end_suite {0, 0} };
+
+int run_suite(const test_description* suite);
+
+#define should_be_true(thing) __should_be_true(_context, #thing, (void *)thing);
+void __should_be_true(void *context, char *desc, void *thing);
