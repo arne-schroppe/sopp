@@ -4,13 +4,7 @@
 
 #include <stdio.h>
 
-
-typedef struct {
-
-
-
-} sopp_option_list;
-
+#define DEFAULT_SIZE 20
 
 /*
 
@@ -23,7 +17,17 @@ typedef struct {
 */
 
 
-void option(const char *token, int *stop) {
+typedef struct {
+	int id;
+	int is_set;
+} option;
+
+typedef struct {
+	int count;
+	option *options;
+} parsed_options;
+
+void parse_option(parsed_options *options, const char *token, int *stop) {
 
 	if(token[0] == '\0') {
 		return;
@@ -43,27 +47,38 @@ void option(const char *token, int *stop) {
 
 	int i = 0;
 	while(token[i] != '\0') {
-		printf("Short option: %c\n", token[i]);
+		(options->options)[options->count] = (option){
+			token[i],
+			1
+		};
+		++(options->count);
+		//printf("Short option: %c\n", token[i]);
 		++i;
 	}
 
 }
 
-void argument(const char *token) {
+void parse_argument(const char *token) {
 	
 }
+
 
 void *sopp_init(int argc, const char **argv, const void *raw_options) {
 
 	int i;
 	int stop = 0;
+
+	parsed_options *parsed_opts = (parsed_options *)malloc(sizeof(parsed_options));
+	parsed_opts->count = 0;
+	parsed_opts->options = (option *)malloc(sizeof(option) * DEFAULT_SIZE);
+
 	for(i = 0; i < argc; ++i) {
 
 		if(argv[i][0] == '-') {
-			option(&(argv[i][1]), &stop);
+			parse_option(parsed_opts, &(argv[i][1]), &stop);
 		}
 		else {
-			argument(argv[i]);
+			parse_argument(argv[i]);
 		}
 
 		if(stop) {
@@ -71,15 +86,21 @@ void *sopp_init(int argc, const char **argv, const void *raw_options) {
 		}
 	}
 
-  return NULL;
+  return parsed_opts;
 }
 
+size_t sopp_count(const void *opts, int key) {
+  const parsed_options *options = opts;
+	int i;
+	for( i = 0; i < options->count; ++i ) {
+		if( options->options[i].id == key && options->options[i].is_set ) {
+			return 1;
+		}
+	}
 
-size_t sopp_count(const void *opts, char key) {
-  return 0;
+	return 0;
 }
 
-
-char *sopp_arg(const void *opts, char key) {
+char *sopp_arg(const void *opts, int key) {
   return 0;
 }

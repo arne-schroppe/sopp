@@ -16,15 +16,12 @@ typedef struct {
 
 #define sopp_list( ... ) (const void *)(sopp_opt[]){ __VA_ARGS__, {0, 0, 0, 0} }
 #define sopp_option(key, flags, shorts, longs)    { key, flags, shorts, longs }
-#define sopp_shorts( ... )      (const char*)(const char[]){ __VA_ARGS__, 0 }
-#define sopp_longs( ... )       (const char**)(const char*[]){ __VA_ARGS__, NULL }
+#define sopp_s( ... )      (const char*)(const char[]){ __VA_ARGS__, 0 }
+#define sopp_l( ... )       (const char**)(const char*[]){ __VA_ARGS__, NULL }
 
 void *sopp_init(int argc, const char **argv, const void *options);
-size_t sopp_count(const void *options, char key);
-char *sopp_arg(const void *options, char key);
-
-
-
+size_t sopp_count(const void *options, int key);
+char *sopp_arg(const void *options, int key);
 
 
 #endif

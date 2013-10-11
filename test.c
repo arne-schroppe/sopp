@@ -1,5 +1,6 @@
 #include "test.h"
 #include <stdio.h>
+#include <stdarg.h>
 
 typedef struct {
 	int success;
@@ -7,40 +8,43 @@ typedef struct {
 } spec_context;
 
 
-void test_failed(void *ctx) {
+void test_result(void *ctx, int is_failing, char *fail_desc, ...) {
 	spec_context *context = (spec_context *)ctx;
-	if(context->success == 0) return;
 
-	printf("'it %s' failed:\n", context->spec_desc);
-	context->success = 0;
+	if(!is_failing) return;
+
+	if(context->success != 0) {
+		printf("it %s:\n", context->spec_desc);
+		context->success = 0;
+	}
+
+	printf("  ");
+	va_list arg_ptr;
+	va_start(arg_ptr, fail_desc);
+	vprintf(fail_desc, arg_ptr);
+	va_end(arg_ptr);
+	printf("\n");
+
 }
 
 void __should_be_true(void *context, char *desc, void *thing) {
-	if(!thing) {
-		test_failed(context);
-		printf("  %s is not true\n", desc);
-	}
+	test_result(context, !thing, "%s is not true", desc);
 }
 
 void __should_be_false(void *context, char *desc, void *thing) {
-	if(thing) {
-		test_failed(context);
-		printf("  %s is not false\n", desc);
-	}
+	test_result(context, !!thing, "%s is not false", desc);
 }
 
 void __should_be_null(void *context, char *desc, void *thing) {
-	if(thing != NULL) {
-		test_failed(context);
-		printf("  %s is not NULL\n", desc);
-	}
+	test_result(context, thing != NULL, "%s is not NULL", desc);
 }
 
 void __should_be_equal(void *context, char *desc1, void *thing1, char *desc2, void *thing2) {
-	if(thing1 != thing2) {
-		test_failed(context);
-		printf("  %s does not equal %s\n", desc1, desc2);
-	}
+	test_result(context, thing1 != thing2, "%s does not equal %s", desc1, desc2);
+}
+
+void __should_not_be_equal(void *context, char *desc1, void *thing1, char *desc2, void *thing2) {
+	test_result(context, thing1 == thing2, "%s equals %s (but shouldn't)", desc1, desc2);
 }
 
 int run_suite(const test_description* suite) {

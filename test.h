@@ -10,14 +10,18 @@ typedef struct { const char *name; spec spec; } test_description;
 
 int run_suite(const test_description* suite);
 
-#define should_be_true(thing) __should_be_true(_context, #thing, (void *)thing);
+#define is_true(thing) __should_be_true(_context, #thing, (void *)thing);
 void __should_be_true(void *context, char *desc, void *thing);
 
-#define should_be_false(thing) __should_be_false(_context, #thing, (void *)thing);
+#define is_false(thing) __should_be_false(_context, #thing, (void *)thing);
 void __should_be_false(void *context, char *desc, void *thing);
 
-#define should_be_null(thing) __should_be_null(_context, #thing, (void *)thing);
+#define is_null(thing) __should_be_null(_context, #thing, (void *)thing);
 void __should_be_null(void *context, char *desc, void *thing);
 
-#define should_be_equal(thing1, thing2) __should_be_equal(_context, #thing1, (void *)thing1, #thing2, (void *)thing2);
+#define is_equal(thing1, thing2) __should_be_equal(_context, #thing1, (void *)thing1, #thing2, (void *)thing2);
 void __should_be_equal(void *context, char *desc1, void *thing1, char *desc2, void *thing2);
+
+#define is_not_equal(thing1, thing2) __should_not_be_equal(_context, #thing1, (void *)thing1, #thing2, (void *)thing2);
+void __should_not_be_equal(void *context, char *desc1, void *thing1, char *desc2, void *thing2);
+
