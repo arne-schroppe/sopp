@@ -6,16 +6,6 @@
 
 #define DEFAULT_SIZE 20
 
-/*
-
-	 options = long | short
-	 long = "--", long_opt, [argument]
-	 long_opt = char+
-	 argument = char+
-
-	 short = "-", short_opt, {short_opt}, [argument]
-*/
-
 
 typedef struct {
 	int id;

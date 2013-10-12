@@ -3,6 +3,11 @@
 #include "sopp.h"
 
 
+int somefunc(int a, int b) {
+	return 0;
+}
+
+
 it (reads_a_short_option) {
 
 	static char *const args[] = {"-a"};
