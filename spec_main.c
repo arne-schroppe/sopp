@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "micro_spec/spec.h"
+#include "tiny_spec/spec.h"
 #include "sopp.h"
 
 

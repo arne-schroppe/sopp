@@ -1,0 +1,3 @@
+[submodule "tiny_spec"]
+	path = tiny_spec
+	url = git@github.com:arne-schroppe/tiny-spec.git
