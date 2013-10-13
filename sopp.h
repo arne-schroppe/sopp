@@ -12,7 +12,7 @@ typedef struct {
   const char *short_opts;
   const char **long_opts;
 	int is_set;
-	char *argument;
+	const char *argument;
 } sopp_option;
 
 
@@ -29,7 +29,7 @@ typedef struct {
 
 void *sopp_init(int argc, const char **argv, sopp_options *options);
 int sopp_is_set(const void *options, int key);
-char *sopp_arg(const void *options, int key);
+const char *sopp_arg(const void *options, int key);
 
 
 #endif
