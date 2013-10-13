@@ -120,10 +120,16 @@ sopp_option *find_option_for_key(const void *opts, int key) {
 /* TODO check for NULL */
 int sopp_is_set(const void *opts, int key) {
 	sopp_option *option = find_option_for_key(opts, key);
+	if(option == NULL) {
+		return 0;
+	}
 	return option->is_set;
 }
 
 const char *sopp_arg(const void *opts, int key) {
 	sopp_option *option = find_option_for_key(opts, key);
+	if(option == NULL) {
+		return NULL;
+	}
   return option->argument;
 }

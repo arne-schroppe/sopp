@@ -79,6 +79,33 @@ it (finds_an_argument_for_the_last_option_in_combined_short_options) {
 	string_is_equal( sopp_arg(options, 'f'), "my_file" );
 }
 
+it (ignores_extra_options) {
+	static char *const args[] = {"-vaf"};
+	void *options = sopp_init(1, (void *)args, sopp_list(
+		sopp_opt('f', 0, sopp_s('f'), NULL)
+	));
+
+	is_equal( sopp_is_set(options, 'f'), 1 );
+}
+
+it (handles_non_existing_options) {
+	static char *const args[] = {"-f"};
+	void *options = sopp_init(1, (void *)args, sopp_list(
+		sopp_opt('f', 0, sopp_s('f'), NULL)
+	));
+
+	sopp_is_set(options, 'a'); /* should not throw an exception */
+}
+
+it (handles_arguments_to_non_existing_options) {
+	static char *const args[] = {"-f", "file"};
+	void *options = sopp_init(2, (void *)args, sopp_list(
+		sopp_opt('f', 0, sopp_s('f'), NULL)
+	));
+
+	is_equal(sopp_arg(options, 'a'), NULL); /* should not throw an exception */
+}
+
 start_spec(sopp)
 	example(identifies_a_short_option)
 	example(identifies_combined_short_options)
@@ -87,6 +114,9 @@ start_spec(sopp)
 	example(finds_an_argument_for_a_short_option)
 	example(finds_an_argument_for_a_long_option)
 	example(finds_an_argument_for_the_last_option_in_combined_short_options)
+	example(ignores_extra_options)
+	example(handles_non_existing_options)
+	example(handles_arguments_to_non_existing_options)
 end_spec
 
 int main(int argc, char **argv) {
