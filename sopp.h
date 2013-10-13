@@ -11,16 +11,24 @@ typedef struct {
   int flags;
   const char *short_opts;
   const char **long_opts;
-} sopp_opt;
+	int is_set;
+	char *argument;
+} sopp_option;
 
 
-#define sopp_list( ... ) (const void *)(sopp_opt[]){ __VA_ARGS__, {0, 0, 0, 0} }
-#define sopp_option(key, flags, shorts, longs)    { key, flags, shorts, longs }
+typedef struct {
+	sopp_option *options;
+	int count;
+} sopp_options;
+
+#define sopp_NULL  (sopp_option){0, 0, 0, 0, 0, 0}
+#define sopp_list( ... ) (sopp_options[]){{ (sopp_option[]){ __VA_ARGS__, sopp_NULL }, 0 }}
+#define sopp_opt(key, flags, shorts, longs)    { key, flags, shorts, longs, 0, NULL }
 #define sopp_s( ... )      (const char*)(const char[]){ __VA_ARGS__, 0 }
 #define sopp_l( ... )       (const char**)(const char*[]){ __VA_ARGS__, NULL }
 
-void *sopp_init(int argc, const char **argv, const void *options);
-size_t sopp_count(const void *options, int key);
+void *sopp_init(int argc, const char **argv, sopp_options *options);
+int sopp_is_set(const void *options, int key);
 char *sopp_arg(const void *options, int key);
 
 

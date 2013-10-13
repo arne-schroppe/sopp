@@ -1,3 +1,4 @@
+#define SPEC_RUNNING
 
 #define it(desc) void desc (void *_context)
 
@@ -17,7 +18,7 @@ int __verify_spec(char *name, spec spec);
 
 
 
-/* Built-in checks */
+/* Built-in matchers */
 
 #define is_true(subject) __is_true(_context, #subject, (void *)subject);
 void __is_true(void *context, char *desc, void *subject);
