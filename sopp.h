@@ -3,7 +3,7 @@
 #define SOPP_H_INCLUDED
 
 /*
-   Simple OPtion Parser
+   SOPP, the Simple OPtion Parser
 */
 
 typedef struct {
