@@ -8,7 +8,6 @@
 
 typedef struct {
   int key;
-  int flags;
   const char *short_opts;
   const char **long_opts;
 	int is_set;
@@ -21,9 +20,9 @@ typedef struct {
 	int count;
 } sopp_options;
 
-#define sopp_NULL  (sopp_option){0, 0, 0, 0, 0, 0}
+#define sopp_NULL  (sopp_option){0, 0, 0, 0, 0}
 #define sopp_list( ... ) (sopp_options[]){{ (sopp_option[]){ __VA_ARGS__, sopp_NULL }, 0 }}
-#define sopp_opt(key, flags, shorts, longs)    { key, flags, shorts, longs, 0, NULL }
+#define sopp_opt(key, shorts, longs)    { key, shorts, longs, 0, NULL }
 #define sopp_s( ... )      (const char*)(const char[]){ __VA_ARGS__, 0 }
 #define sopp_l( ... )       (const char**)(const char*[]){ __VA_ARGS__, NULL }
 
