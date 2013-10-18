@@ -97,6 +97,17 @@ it (handles_non_existing_options) {
 	sopp_is_set(options, 'a'); /* should not throw an exception */
 }
 
+it (handles_several_non_existing_options) {
+	static char *const args[] = {"-f"};
+	void *options = sopp_init(1, (void *)args, sopp_list(
+		sopp_opt('a', sopp_s('a'), NULL),
+		sopp_opt('b', sopp_s('b'), NULL),
+		sopp_opt('f', sopp_s('f'), NULL)
+	));
+
+	sopp_is_set(options, 'x'); /* should not throw an exception */
+}
+
 it (handles_arguments_to_non_existing_options) {
 	static char *const args[] = {"-f", "file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
@@ -117,7 +128,9 @@ start_spec(sopp)
 	example(ignores_extra_options)
 	example(handles_non_existing_options)
 	example(handles_arguments_to_non_existing_options)
+	example(handles_several_non_existing_options)
 end_spec
+
 
 int main(int argc, char **argv) {
 	return verify_spec(sopp);
