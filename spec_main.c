@@ -1,8 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "tiny_spec/spec.h"
 #include "sopp.h"
 
 extern char* test_print_buffer;
+
+#define with_print_buffer(block) \
+	test_print_buffer = (char *)malloc(sizeof(char) * 1000); \
+  block \
+  free(test_print_buffer); \
+  test_print_buffer = NULL;
+
 
 it (identifies_a_short_option) {
 	static char *const args[] = {"-A"};
@@ -80,6 +88,7 @@ it (finds_an_argument_for_the_last_option_in_combined_short_options) {
 	string_is_equal( sopp_arg(options, 'f'), "my_file" );
 }
 
+
 it (ignores_extra_options) {
 	static char *const args[] = {"-vaf"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
@@ -89,6 +98,7 @@ it (ignores_extra_options) {
 	is_equal( sopp_is_set(options, 'f'), 1 );
 }
 
+
 it (handles_non_existing_options) {
 	static char *const args[] = {"-f"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
@@ -97,6 +107,7 @@ it (handles_non_existing_options) {
 
 	sopp_is_set(options, 'a'); /* should not throw an exception */
 }
+
 
 it (handles_several_non_existing_options) {
 	static char *const args[] = {"-f"};
@@ -109,6 +120,7 @@ it (handles_several_non_existing_options) {
 	sopp_is_set(options, 'x'); /* should not throw an exception */
 }
 
+
 it (handles_arguments_to_non_existing_options) {
 	static char *const args[] = {"-f", "file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
@@ -118,14 +130,30 @@ it (handles_arguments_to_non_existing_options) {
 	is_equal(sopp_arg(options, 'a'), NULL); /* should not throw an exception */
 }
 
+
+
 it (prints_descriptions_for_short_option) {
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
 		sopp_opt('f', sopp_s('f'), NULL, "The file to process")
 	));
 
-  sopp_print_description(options);
-	string_is_equal(test_print_buffer, "-f\tThe file to process");
+  with_print_buffer({
+	  sopp_print_help(options);
+	  string_is_equal(test_print_buffer, "-f\tThe file to process");
+  });
+}
+
+it (prints_descriptions_for_long_option) {
+	static char *const args[] = {};
+	void *options = sopp_init(0, (void *)args, sopp_list(
+		sopp_opt('f', NULL, sopp_l("file"), "The file to process")
+	));
+
+  with_print_buffer({
+	  sopp_print_help(options);
+	  string_is_equal(test_print_buffer, "--file\tThe file to process");
+  });
 }
 
 
@@ -142,6 +170,7 @@ start_spec(sopp)
 	example(handles_arguments_to_non_existing_options)
 	example(handles_several_non_existing_options)
 	example(prints_descriptions_for_short_option)
+	example(prints_descriptions_for_long_option)
 end_spec
 
 

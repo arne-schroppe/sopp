@@ -4,6 +4,25 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef TEST
+  #include <stdarg.h>
+
+  char *test_print_buffer;
+
+  void print_to_buffer(char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    vsprintf(test_print_buffer, format, args);
+    va_end(args);
+  }
+
+  #define sopp_print(...) print_to_buffer(__VA_ARGS__)
+
+#else
+
+  #define sopp_print(...) printf(__VA_ARGS__)
+
+#endif
 
 void set_short_option(sopp_options *options, const char short_opt, sopp_option **last_option) {
 	int i;
@@ -132,4 +151,9 @@ const char *sopp_arg(const void *opts, int key) {
 		return NULL;
 	}
   return option->argument;
+}
+
+
+void sopp_print_help(const void *options) {
+  sopp_print("-f	The file to process");
 }

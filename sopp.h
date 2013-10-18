@@ -30,7 +30,7 @@ typedef struct {
 void *sopp_init(int argc, const char **argv, sopp_options *options);
 int sopp_is_set(const void *options, int key);
 const char *sopp_arg(const void *options, int key);
-void sopp_print_description(const void *options);
+void sopp_print_help(const void *options);
 
 
 #endif
