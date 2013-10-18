@@ -2,6 +2,7 @@
 #include "tiny_spec/spec.h"
 #include "sopp.h"
 
+extern char* test_print_buffer;
 
 it (identifies_a_short_option) {
 	static char *const args[] = {"-A"};
@@ -117,6 +118,16 @@ it (handles_arguments_to_non_existing_options) {
 	is_equal(sopp_arg(options, 'a'), NULL); /* should not throw an exception */
 }
 
+it (prints_descriptions_for_short_option) {
+	static char *const args[] = {};
+	void *options = sopp_init(0, (void *)args, sopp_list(
+		sopp_opt('f', sopp_s('f'), NULL, "The file to process")
+	));
+
+  sopp_print_description(options);
+	string_is_equal(test_print_buffer, "-f\tThe file to process");
+}
+
 
 start_spec(sopp)
 	example(identifies_a_short_option)
@@ -130,6 +141,7 @@ start_spec(sopp)
 	example(handles_non_existing_options)
 	example(handles_arguments_to_non_existing_options)
 	example(handles_several_non_existing_options)
+	example(prints_descriptions_for_short_option)
 end_spec
 
 
