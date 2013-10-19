@@ -4,23 +4,30 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef TEST
+#ifdef TINY_SPEC
   #include <stdarg.h>
 
-  char *test_print_buffer;
+  char *test_print_buffer = NULL;
+	size_t test_buffer_num_chars = 0;
+
+	void init_print_buffer() {
+		free(test_print_buffer);
+		test_print_buffer = (char *)calloc(1000, sizeof(char));
+		test_buffer_num_chars = 0;
+	}
 
   void print_to_buffer(char *format, ...) {
+		if(test_print_buffer == NULL) {
+			return;
+		}
+
     va_list args;
     va_start(args, format);
-    vsprintf(test_print_buffer, format, args);
+    test_buffer_num_chars += vsprintf(test_print_buffer + test_buffer_num_chars, format, args);
     va_end(args);
   }
 
-  #define sopp_print(...) print_to_buffer(__VA_ARGS__)
-
-#else
-
-  #define sopp_print(...) printf(__VA_ARGS__)
+  #define printf(...) print_to_buffer(__VA_ARGS__)
 
 #endif
 
@@ -28,13 +35,9 @@ void set_short_option(sopp_options *options, const char short_opt, sopp_option *
 	int i;
 	for( i = 0; i < options->count; ++i ) {
 		sopp_option *option = &options->options[i];
-		int j = 0;
-		while(option->short_opts[j] != 0) {
-			if(option->short_opts[j] == short_opt) {
-				option->is_set = 1;
-				*last_option = option;
-			}
-			++j;
+		if(option->short_opt == short_opt) {
+			option->is_set = 1;
+			*last_option = option;
 		}
 	}
 }
@@ -43,13 +46,9 @@ void set_long_option(sopp_options *options, const char *long_opt, sopp_option **
 	int i;
 	for( i = 0; i < options->count; ++i ) {
 		sopp_option *option = &options->options[i];
-		int j = 0;
-		while(option->long_opts[j] != NULL) {
-			if(strcmp(option->long_opts[j], long_opt) == 0) {
-				option->is_set = 1;
-				*last_option = option;
-			}
-			++j;
+		if(strcmp(option->long_opt, long_opt) == 0) {
+			option->is_set = 1;
+			*last_option = option;
 		}
 	}
 }
@@ -153,7 +152,26 @@ const char *sopp_arg(const void *opts, int key) {
   return option->argument;
 }
 
+void print_option(sopp_option *option) {
+  int hasShortOptions = option->short_opt != 0;
+  int hasLongOptions = option->long_opt != NULL;
+	if(hasShortOptions && hasLongOptions) {
+		printf("-%c or --%s	%s\n", option->short_opt, option->long_opt, option->description);
+	}
+	else if(hasShortOptions) {
+		printf("-%c	%s\n", option->short_opt, option->description);
+	}
+	else {
+		printf("--%s	%s\n", option->long_opt, option->description);
+	}
 
-void sopp_print_help(const void *options) {
-  sopp_print("-f	The file to process");
+}
+
+void sopp_print_help(const void *opts) {
+  const sopp_options *options = opts;
+	sopp_option *option = options->options;
+	while(option->key != 0) {
+		print_option(option);
+		++option;
+	}
 }
