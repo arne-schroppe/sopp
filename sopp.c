@@ -35,9 +35,13 @@ void set_short_option(sopp_options *options, const char short_opt, sopp_option *
 	int i;
 	for( i = 0; i < options->count; ++i ) {
 		sopp_option *option = &options->options[i];
-		if(option->short_opt == short_opt) {
-			option->is_set = 1;
-			*last_option = option;
+		alias *alias = option->aliases;
+		while(alias->type != INVALID) {
+			if(alias->type == SHORT && alias->identifier.s == short_opt) {
+				option->is_set = 1;
+				*last_option = option;
+			}
+			++alias;
 		}
 	}
 }
@@ -46,12 +50,17 @@ void set_long_option(sopp_options *options, const char *long_opt, sopp_option **
 	int i;
 	for( i = 0; i < options->count; ++i ) {
 		sopp_option *option = &options->options[i];
-		if(strcmp(option->long_opt, long_opt) == 0) {
-			option->is_set = 1;
-			*last_option = option;
+		alias *alias = option->aliases;
+		while(alias->type != INVALID) {
+			if(alias->type == LONG && strcmp(alias->identifier.l, long_opt) == 0) {
+				option->is_set = 1;
+				*last_option = option;
+			}
+			++alias;
 		}
 	}
 }
+
 
 void parse_option(sopp_options *options, const char *token, sopp_option **last_option, int *stop) {
 
@@ -152,23 +161,38 @@ const char *sopp_arg(const void *opts, int key) {
   return option->argument;
 }
 
+void print_alias(alias *alias) {
+	switch(alias->type) {
+
+		case SHORT:
+			printf("-%c", alias->identifier.s);
+			break;
+
+		case LONG:
+			printf("--%s", alias->identifier.l);
+			break;
+		
+		case INVALID:
+			/*This should not happen*/
+			break;
+	}
+}
+
 void print_option(sopp_option *option) {
 	if(option->description == NULL) {
 		return;
 	}
 
-  int hasShortOptions = option->short_opt != 0;
-  int hasLongOptions = option->long_opt != NULL;
-	if(hasShortOptions && hasLongOptions) {
-		printf("-%c, --%s	%s\n", option->short_opt, option->long_opt, option->description);
-	}
-	else if(hasShortOptions) {
-		printf("-%c	%s\n", option->short_opt, option->description);
-	}
-	else {
-		printf("--%s	%s\n", option->long_opt, option->description);
+	alias *alias = option->aliases;
+	while(alias->type != INVALID) {
+		print_alias(alias);
+		if((alias+1)->type != INVALID) {
+			printf(", ");
+		}
+		++alias;
 	}
 
+	printf("	%s\n", option->description);
 }
 
 void sopp_print_help(const void *opts) {

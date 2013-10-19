@@ -15,7 +15,7 @@ void init_print_buffer();
 it (identifies_a_short_option) {
 	static char *const args[] = {"-A"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('a', 'A', NULL, NULL)
+		sopp_opt('a', NULL, sopp_s('A'))
 	));
 
 	is_equal( sopp_is_set(options, 'a'), 1 );
@@ -25,7 +25,7 @@ it (identifies_a_short_option) {
 it (does_not_identify_a_short_option) {
 	static char *const args[] = {"-B"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('a', 'A', NULL, NULL)
+		sopp_opt('a', NULL, sopp_s('A'))
 	));
 
 	is_not_equal( sopp_is_set(options, 'a'), 1 );
@@ -35,9 +35,9 @@ it (does_not_identify_a_short_option) {
 it (identifies_combined_short_options) {
 	static char *const args[] = {"-abc"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('a', 'a', NULL, NULL),
-		sopp_opt('b', 'b', NULL, NULL),
-		sopp_opt('c', 'c', NULL, NULL)
+		sopp_opt('a', NULL, sopp_s('a')),
+		sopp_opt('b', NULL, sopp_s('b')),
+		sopp_opt('c', NULL, sopp_s('c'))
 	));
 
 	is_equal( sopp_is_set(options, 'a'), 1 );
@@ -50,7 +50,7 @@ it (identifies_combined_short_options) {
 it (identifies_a_long_option) {
 	static char *const args[] = {"--long_option"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('l', 0, "long_option", NULL)
+		sopp_opt('l', NULL, sopp_l("long_option"))
 	));
 
 	is_equal( sopp_is_set(options, 'l'), 1 );
@@ -60,7 +60,7 @@ it (identifies_a_long_option) {
 it (finds_an_argument_for_a_short_option) {
 	static char *const args[] = {"-f", "my_file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	string_is_equal( sopp_arg(options, 'f'), "my_file" );
@@ -70,7 +70,7 @@ it (finds_an_argument_for_a_short_option) {
 it (finds_an_argument_for_a_long_option) {
 	static char *const args[] = {"--file", "my_file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
-		sopp_opt('f', 0, "file", NULL)
+		sopp_opt('f', NULL, sopp_l("file"))
 	));
 
 	string_is_equal( sopp_arg(options, 'f'), "my_file" );
@@ -80,9 +80,9 @@ it (finds_an_argument_for_a_long_option) {
 it (finds_an_argument_for_the_last_option_in_combined_short_options) {
 	static char *const args[] = {"-vaf", "my_file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
-		sopp_opt('v', 'v', NULL, NULL),
-		sopp_opt('a', 'a', NULL, NULL),
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('v', NULL, sopp_s('v')),
+		sopp_opt('a', NULL, sopp_s('a')),
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	string_is_equal( sopp_arg(options, 'f'), "my_file" );
@@ -92,7 +92,7 @@ it (finds_an_argument_for_the_last_option_in_combined_short_options) {
 it (ignores_extra_options) {
 	static char *const args[] = {"-vaf"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	is_equal( sopp_is_set(options, 'f'), 1 );
@@ -102,7 +102,7 @@ it (ignores_extra_options) {
 it (handles_non_existing_options) {
 	static char *const args[] = {"-f"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	sopp_is_set(options, 'a'); /* should not throw an exception */
@@ -112,9 +112,9 @@ it (handles_non_existing_options) {
 it (handles_several_non_existing_options) {
 	static char *const args[] = {"-f"};
 	void *options = sopp_init(1, (void *)args, sopp_list(
-		sopp_opt('a', 'a', NULL, NULL),
-		sopp_opt('b', 'b', NULL, NULL),
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('a', NULL, sopp_s('a')),
+		sopp_opt('b', NULL, sopp_s('b')),
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	sopp_is_set(options, 'x'); /* should not throw an exception */
@@ -124,7 +124,7 @@ it (handles_several_non_existing_options) {
 it (handles_arguments_to_non_existing_options) {
 	static char *const args[] = {"-f", "file"};
 	void *options = sopp_init(2, (void *)args, sopp_list(
-		sopp_opt('f', 'f', NULL, NULL)
+		sopp_opt('f', NULL, sopp_s('f'))
 	));
 
 	is_equal(sopp_arg(options, 'a'), NULL); /* should not throw an exception */
@@ -135,7 +135,7 @@ it (handles_arguments_to_non_existing_options) {
 it (prints_a_description_for_a_short_option) {
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('a', 'f', NULL, "The file to process")
+		sopp_opt('a', "The file to process", sopp_s('f'))
 	));
 
   with_print_buffer({
@@ -147,7 +147,7 @@ it (prints_a_description_for_a_short_option) {
 it (prints_a_description_for_a_long_option) {
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('f', 0, "file", "The file to process")
+		sopp_opt('f', "The file to process", sopp_l("file"))
 	));
 
   with_print_buffer({
@@ -160,7 +160,7 @@ it (prints_a_description_for_long_and_short_options) {
 
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('f', 'f', "file", "The file to process")
+		sopp_opt('f', "The file to process", sopp_s('f'), sopp_l("file"))
 	));
 
   with_print_buffer({
@@ -169,13 +169,26 @@ it (prints_a_description_for_long_and_short_options) {
   });
 }
 
+it (prints_a_description_for_everal_options_in_order) {
+
+	static char *const args[] = {};
+	void *options = sopp_init(0, (void *)args, sopp_list(
+		sopp_opt('f', "The file to process", sopp_s('f'), sopp_s('F'), sopp_l("file"), sopp_s('d'), sopp_l("the_file"))
+	));
+
+  with_print_buffer({
+	  sopp_print_help(options);
+	  string_is_equal(test_print_buffer, "-f, -F, --file, -d, --the_file\tThe file to process\n");
+  });
+}
+
 
 it (prints_descriptions_for_several_short_options) {
 
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('d', 'd', NULL, "A directory with settings"),
-		sopp_opt('f', 'f', NULL, "The file to process")
+		sopp_opt('d', "A directory with settings", sopp_s('d')),
+		sopp_opt('f', "The file to process", sopp_s('f'))
 	));
 
   with_print_buffer({
@@ -189,8 +202,8 @@ it (prints_descriptions_for_several_long_options) {
 
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('d', 0, "dir", "A directory with settings"),
-		sopp_opt('f', 0, "file", "The file to process")
+		sopp_opt('d', "A directory with settings", sopp_l("dir")),
+		sopp_opt('f', "The file to process", sopp_l("file"))
 	));
 
   with_print_buffer({
@@ -200,12 +213,14 @@ it (prints_descriptions_for_several_long_options) {
 }
 
 
+
+
 it (does_not_print_anything_if_no_description_is_given) {
 
 	static char *const args[] = {};
 	void *options = sopp_init(0, (void *)args, sopp_list(
-		sopp_opt('d', 0, "dir", "A directory with settings"),
-		sopp_opt('f', 0, "file", NULL)
+		sopp_opt('d', "A directory with settings", sopp_l("dir")),
+		sopp_opt('f', NULL, sopp_l("file"))
 	));
 
   with_print_buffer({
@@ -234,6 +249,7 @@ start_spec(sopp)
 	example(prints_descriptions_for_several_short_options)
 	example(prints_descriptions_for_several_long_options)
 	example(does_not_print_anything_if_no_description_is_given)
+	example(prints_a_description_for_everal_options_in_order)
 end_spec
 
 
