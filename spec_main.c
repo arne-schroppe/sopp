@@ -9,7 +9,7 @@ void init_print_buffer();
 
 #define with_print_buffer(block) \
 	init_print_buffer(); \
-  block \
+	block \
 
 
 it (identifies_a_short_option) {
@@ -138,10 +138,10 @@ it (prints_a_description_for_a_short_option) {
 		sopp_opt('a', "The file to process", sopp_s('f'))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "-f\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "-f\tThe file to process\n");
+	});
 }
 
 it (prints_a_description_for_a_long_option) {
@@ -150,10 +150,10 @@ it (prints_a_description_for_a_long_option) {
 		sopp_opt('f', "The file to process", sopp_l("file"))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "--file\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "--file\tThe file to process\n");
+	});
 }
 
 it (prints_a_description_for_long_and_short_options) {
@@ -163,10 +163,10 @@ it (prints_a_description_for_long_and_short_options) {
 		sopp_opt('f', "The file to process", sopp_s('f'), sopp_l("file"))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "-f, --file\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "-f, --file\tThe file to process\n");
+	});
 }
 
 it (prints_a_description_for_everal_options_in_order) {
@@ -176,10 +176,10 @@ it (prints_a_description_for_everal_options_in_order) {
 		sopp_opt('f', "The file to process", sopp_s('f'), sopp_s('F'), sopp_l("file"), sopp_s('d'), sopp_l("the_file"))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "-f, -F, --file, -d, --the_file\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "-f, -F, --file, -d, --the_file\tThe file to process\n");
+	});
 }
 
 
@@ -191,10 +191,10 @@ it (prints_descriptions_for_several_short_options) {
 		sopp_opt('f', "The file to process", sopp_s('f'))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "-d\tA directory with settings\n-f\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "-d\tA directory with settings\n-f\tThe file to process\n");
+	});
 }
 
 
@@ -206,10 +206,10 @@ it (prints_descriptions_for_several_long_options) {
 		sopp_opt('f', "The file to process", sopp_l("file"))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "--dir\tA directory with settings\n--file\tThe file to process\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "--dir\tA directory with settings\n--file\tThe file to process\n");
+	});
 }
 
 
@@ -223,10 +223,10 @@ it (does_not_print_anything_if_no_description_is_given) {
 		sopp_opt('f', NULL, sopp_l("file"))
 	));
 
-  with_print_buffer({
-	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "--dir\tA directory with settings\n");
-  });
+	with_print_buffer({
+		sopp_print_help(options);
+		string_is_equal(test_print_buffer, "--dir\tA directory with settings\n");
+	});
 }
 
 

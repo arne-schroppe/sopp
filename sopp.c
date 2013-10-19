@@ -5,9 +5,9 @@
 #include <string.h>
 
 #ifdef TINY_SPEC
-  #include <stdarg.h>
+	#include <stdarg.h>
 
-  char *test_print_buffer = NULL;
+	char *test_print_buffer = NULL;
 	size_t test_buffer_num_chars = 0;
 
 	void init_print_buffer() {
@@ -16,18 +16,18 @@
 		test_buffer_num_chars = 0;
 	}
 
-  void print_to_buffer(char *format, ...) {
+	void print_to_buffer(char *format, ...) {
 		if(test_print_buffer == NULL) {
 			return;
 		}
 
-    va_list args;
-    va_start(args, format);
-    test_buffer_num_chars += vsprintf(test_print_buffer + test_buffer_num_chars, format, args);
-    va_end(args);
-  }
+	  va_list args;
+	  va_start(args, format);
+	  test_buffer_num_chars += vsprintf(test_print_buffer + test_buffer_num_chars, format, args);
+	  va_end(args);
+	}
 
-  #define printf(...) print_to_buffer(__VA_ARGS__)
+	#define printf(...) print_to_buffer(__VA_ARGS__)
 
 #endif
 
@@ -128,12 +128,12 @@ void *sopp_init(int argc, const char **argv, sopp_options *options) {
 		}
 	}
 
-  return options;
+	return options;
 }
 
 
 sopp_option *find_option_for_key(const void *opts, int key) {
-  const sopp_options *options = opts;
+	const sopp_options *options = opts;
 	int i;
 	for( i = 0; i < options->count; ++i ) {
 		if( options->options[i].key == key) {
@@ -158,7 +158,7 @@ const char *sopp_arg(const void *opts, int key) {
 	if(option == NULL) {
 		return NULL;
 	}
-  return option->argument;
+	return option->argument;
 }
 
 void print_alias(alias *alias) {
@@ -196,7 +196,7 @@ void print_option(sopp_option *option) {
 }
 
 void sopp_print_help(const void *opts) {
-  const sopp_options *options = opts;
+	const sopp_options *options = opts;
 	sopp_option *option = options->options;
 	while(option->key != 0) {
 		print_option(option);
