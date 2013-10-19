@@ -165,7 +165,7 @@ it (prints_a_description_for_long_and_short_options) {
 
   with_print_buffer({
 	  sopp_print_help(options);
-	  string_is_equal(test_print_buffer, "-f or --file\tThe file to process\n");
+	  string_is_equal(test_print_buffer, "-f, --file\tThe file to process\n");
   });
 }
 
@@ -199,6 +199,22 @@ it (prints_descriptions_for_several_long_options) {
   });
 }
 
+
+it (does_not_print_anything_if_no_description_is_given) {
+
+	static char *const args[] = {};
+	void *options = sopp_init(0, (void *)args, sopp_list(
+		sopp_opt('d', 0, "dir", "A directory with settings"),
+		sopp_opt('f', 0, "file", NULL)
+	));
+
+  with_print_buffer({
+	  sopp_print_help(options);
+	  string_is_equal(test_print_buffer, "--dir\tA directory with settings\n");
+  });
+}
+
+
 start_spec(sopp)
 	example(identifies_a_short_option)
 	example(identifies_combined_short_options)
@@ -211,11 +227,13 @@ start_spec(sopp)
 	example(handles_non_existing_options)
 	example(handles_arguments_to_non_existing_options)
 	example(handles_several_non_existing_options)
+
 	example(prints_a_description_for_a_short_option)
 	example(prints_a_description_for_a_long_option)
 	example(prints_a_description_for_long_and_short_options)
 	example(prints_descriptions_for_several_short_options)
 	example(prints_descriptions_for_several_long_options)
+	example(does_not_print_anything_if_no_description_is_given)
 end_spec
 
 

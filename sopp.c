@@ -153,10 +153,14 @@ const char *sopp_arg(const void *opts, int key) {
 }
 
 void print_option(sopp_option *option) {
+	if(option->description == NULL) {
+		return;
+	}
+
   int hasShortOptions = option->short_opt != 0;
   int hasLongOptions = option->long_opt != NULL;
 	if(hasShortOptions && hasLongOptions) {
-		printf("-%c or --%s	%s\n", option->short_opt, option->long_opt, option->description);
+		printf("-%c, --%s	%s\n", option->short_opt, option->long_opt, option->description);
 	}
 	else if(hasShortOptions) {
 		printf("-%c	%s\n", option->short_opt, option->description);
