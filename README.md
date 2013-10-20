@@ -12,12 +12,12 @@ void *options = sopp_init(argc, argv, sopp_list(
   sopp_opt('f', "The input file", sopp_s('f'), sopp_l("file"))
 ));
     
-if( sopp_is_set(options, 'f') == 0 ) {
+if( !sopp_is_set(options, 'f') ) {
   sopp_print_help(options);
   exit(1);
 }
     
-if( sopp_is_set(options, 'd') == 1 ) {
+if( sopp_is_set(options, 'd') ) {
   char *dir = sopp_arg(options, 'd');
   use_output_dir(dir);
 }
